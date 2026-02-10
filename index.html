@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>간단한 계산기</title>
+    <style>
+        /* 기본 스타일 및 레이아웃 설정 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        /* 계산기 전체 컨테이너 */
+        .calculator {
+            width: 320px;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        /* 결과가 표시되는 화면 */
+        .display {
+            background-color: #222;
+            color: #fff;
+            font-size: 2.8rem;
+            text-align: right;
+            padding: 20px;
+            min-height: 60px;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+
+        /* 버튼들을 감싸는 그리드 */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        /* 개별 버튼 스타일 */
+        .btn {
+            border: 1px solid #ddd;
+            padding: 20px;
+            font-size: 1.5rem;
+            background-color: #fafafa;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .btn:active {
+            background-color: #e0e0e0;
+        }
+
+        /* 연산자 버튼 스타일 (주황색 계열) */
+        .operator {
+            background-color: #f9a825;
+            color: white;
+        }
+
+        .operator:hover {
+            background-color: #fbc02d;
+        }
+        
+        .operator:active {
+            background-color: #f57f17;
+        }
+
+        /* '=' 버튼 스타일 (주황색 계열) */
+        .equals {
+            grid-column: span 2;
+            background-color: #f9a825;
+            color: white;
+        }
+        
+        .equals:hover {
+            background-color: #fbc02d;
+        }
+
+        .equals:active {
+            background-color: #f57f17;
+        }
+
+        /* 'C' 버튼 스타일 */
+        .clear {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <!-- 1행 -->
+            <button class="btn clear" onclick="clearDisplay()">C</button>
+            <button class="btn operator" onclick="appendToDisplay('/')">/</button>
+            <button class="btn operator" onclick="appendToDisplay('*')">x</button>
+            <button class="btn operator" onclick="appendToDisplay('-')">-</button>
+            
+            <!-- 2행 -->
+            <button class="btn" onclick="appendToDisplay('7')">7</button>
+            <button class="btn" onclick="appendToDisplay('8')">8</button>
+            <button class="btn" onclick="appendToDisplay('9')">9</button>
+            <button class="btn operator" onclick="appendToDisplay('+')" style="grid-row: span 2;">+</button>
+
+            <!-- 3행 -->
+            <button class="btn" onclick="appendToDisplay('4')">4</button>
+            <button class="btn" onclick="appendToDisplay('5')">5</button>
+            <button class="btn" onclick="appendToDisplay('6')">6</button>
+
+            <!-- 4행 -->
+            <button class="btn" onclick="appendToDisplay('1')">1</button>
+            <button class="btn" onclick="appendToDisplay('2')">2</button>
+            <button class="btn" onclick="appendToDisplay('3')">3</button>
+            <button class="btn equals" onclick="calculateResult()" style="grid-row: span 2;">=</button>
+
+            <!-- 5행 -->
+            <button class="btn" onclick="appendToDisplay('0')" style="grid-column: span 2;">0</button>
+            <button class="btn" onclick="appendToDisplay('.')">.</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        let currentInput = '';
+
+        // 화면에 값을 추가하는 함수
+        function appendToDisplay(value) {
+            // '0'으로 시작할 때 다른 숫자가 오면 '0'을 대체
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            display.textContent = currentInput;
+        }
+
+        // 화면을 초기화하는 함수
+        function clearDisplay() {
+            currentInput = '0';
+            display.textContent = currentInput;
+        }
+
+        // 계산 결과를 도출하는 함수
+        function calculateResult() {
+            try {
+                // 'x'를 '*'로 변경하여 계산
+                const expressionToEvaluate = currentInput.replace(/x/g, '*');
+                // eval 함수를 사용하여 문자열 형태의 수식을 계산
+                let result = eval(expressionToEvaluate);
+                
+                // 결과가 너무 길 경우 지수 형태로 표현
+                if (result.toString().length > 10) {
+                    result = result.toExponential(5);
+                }
+
+                display.textContent = result;
+                currentInput = result.toString();
+            } catch (error) {
+                // 수식에 오류가 있을 경우 '오류' 메시지 표시
+                display.textContent = '오류';
+                currentInput = '';
+            }
+        }
+        
+        // 페이지 로드 시 화면 초기화
+        clearDisplay();
+    </script>
+
+</body>
+</html>
