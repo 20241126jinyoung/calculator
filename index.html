@@ -34,6 +34,35 @@
       padding: 24px;
     }
 
+    body[data-theme="dark"] {
+      --bg: #0f172a;
+      --panel: #0b1220;
+      --shadow: rgba(0, 0, 0, 0.55);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #f59e0b;
+      --accent-dark: #b45309;
+      --btn: #1f2937;
+      --btn-hover: #334155;
+      --btn-active: #0f172a;
+      --sci: #1e293b;
+      --sci-hover: #334155;
+    }
+
+    body[data-theme="dark"] .display {
+      background: #0b1220;
+      color: #f8fafc;
+    }
+
+    body[data-theme="dark"] .titlebar {
+      background: linear-gradient(90deg, #0b1220, #111827);
+    }
+
+    body[data-theme="dark"] .history-panel,
+    body[data-theme="dark"] .window {
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+    }
+
     .shell {
       display: flex;
       align-items: stretch;
@@ -122,6 +151,16 @@
     }
 
     .toggle:hover { background: #f3f4f6; }
+
+    body[data-theme="dark"] .toggle {
+      border-color: #334155;
+      background: #111827;
+      color: #e2e8f0;
+    }
+
+    body[data-theme="dark"] .toggle:hover {
+      background: #1f2937;
+    }
 
     .buttons {
       display: grid;
@@ -260,7 +299,10 @@
         <div class="display" id="display">0</div>
         <div class="toolbar">
           <button type="button" class="mode" id="angleModeBtn" onclick="toggleAngleMode()">RAD</button>
-          <button type="button" class="toggle" id="toggleHistoryBtn" onclick="toggleHistory()">저장기록</button>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="toggle" id="themeToggleBtn" onclick="toggleTheme()">다크모드</button>
+            <button type="button" class="toggle" id="toggleHistoryBtn" onclick="toggleHistory()">저장기록</button>
+          </div>
         </div>
 
         <div class="buttons sci-buttons">
@@ -329,10 +371,12 @@
     const shell = document.getElementById('shell');
     const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
     const angleModeBtn = document.getElementById('angleModeBtn');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
 
     let currentInput = '0';
     let angleMode = 'RAD';
     const HISTORY_KEY = 'calc_history';
+    const THEME_KEY = 'calc_theme';
 
     function renderDisplay() {
       display.textContent = currentInput;
@@ -346,6 +390,17 @@
     function toggleAngleMode() {
       angleMode = angleMode === 'RAD' ? 'DEG' : 'RAD';
       angleModeBtn.textContent = angleMode;
+    }
+
+    function applyTheme(theme) {
+      document.body.setAttribute('data-theme', theme);
+      themeToggleBtn.textContent = theme === 'dark' ? '라이트모드' : '다크모드';
+      localStorage.setItem(THEME_KEY, theme);
+    }
+
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
     }
 
     function toRadians(value) {
@@ -556,6 +611,10 @@
         clearDisplay();
       }
     });
+
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
 
     renderDisplay();
     renderHistory();
