@@ -384,7 +384,7 @@
     }
 
     function appendOperator(op) {
-      if (/[+\-*/^]$/.test(currentInput)) {
+      if (/[+*/^-]$/.test(currentInput)) {
         currentInput = currentInput.slice(0, -1) + op;
       } else {
         currentInput += op;
@@ -562,6 +562,7 @@
   </script>
 </body>
 </html>
+
 `;
 
 export default {
